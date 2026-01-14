@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PricingType {
+  STATIC
+  TIERED
+  DISCOUNTED
+  DYNAMIC
+  FREE
+}
+
+enum DiscountType {
+  FLAT
+  PERCENTAGE
+}
+
+enum DayOfWeek {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+model Category {
+  id              String   @id @default(cuid())
+  name            String
+  image           String?
+  description     String?
+
+  taxApplicable   Boolean
+  taxPercentage   Float?
+
+  isActive        Boolean  @default(true)
+
+  subcategories   Subcategory[]
+  items           Item[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([name])
+}
+
+model Subcategory {
+  id              String   @id @default(cuid())
+  categoryId      String
+  category        Category @relation(fields: [categoryId], references: [id])
+
+  name            String
+  image           String?
+  description     String?
+
+  taxApplicable   Boolean?
+  taxPercentage   Float?
+
+  isActive        Boolean  @default(true)
+
+  items           Item[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([categoryId, name])
+}
+
+model Item {
+  id              String   @id @default(cuid())
+
+  categoryId      String?
+  subcategoryId   String?
+
+  category        Category?    @relation(fields: [categoryId], references: [id])
+  subcategory     Subcategory? @relation(fields: [subcategoryId], references: [id])
+
+  name            String
+  description     String?
+  image           String?
+
+  pricingType     PricingType
+  isBookable      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+
+  pricingConfig   PricingConfig?
+  availabilities  Availability[]
+  bookings        Booking[]
+  addonGroups     AddonGroup[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PricingConfig {
+  id          String      @id @default(cuid())
+  itemId      String      @unique
+  item        Item        @relation(fields: [itemId], references: [id])
+
+  type        PricingType
+
+  staticPrice     StaticPrice?
+  tiers           PricingTier[]
+  discountPrice   DiscountPrice?
+  dynamicWindows  DynamicPriceWindow[]
+}
+
+
+model StaticPrice {
+  id          String @id @default(cuid())
+  pricingId  String @unique
+  pricing    PricingConfig @relation(fields: [pricingId], references: [id])
+
+  price       Float
+}
+
+model PricingTier {
+  id          String @id @default(cuid())
+  pricingId  String
+  pricing    PricingConfig @relation(fields: [pricingId], references: [id])
+
+  maxUsage   Int
+  price      Float
+}
+
+model DiscountPrice {
+  id              String @id @default(cuid())
+  pricingId       String @unique
+  pricing         PricingConfig @relation(fields: [pricingId], references: [id])
+
+  basePrice       Float
+  discountType    DiscountType
+  discountValue   Float
+}
+
+model DynamicPriceWindow {
+  id          String @id @default(cuid())
+  pricingId  String
+  pricing    PricingConfig @relation(fields: [pricingId], references: [id])
+
+  startTime  DateTime
+  endTime    DateTime
+  price      Float
+}
+
+model Availability {
+  id          String @id @default(cuid())
+  itemId      String
+  item        Item   @relation(fields: [itemId], references: [id])
+
+  dayOfWeek   DayOfWeek
+  startTime   DateTime
+  endTime     DateTime
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id])
+
+  bookingDate DateTime
+  startTime   DateTime
+  endTime     DateTime
+
+  createdAt   DateTime @default(now())
+}
+
+model AddonGroup {
+  id          String @id @default(cuid())
+  itemId      String
+  item        Item   @relation(fields: [itemId], references: [id])
+
+  name        String
+  required    Boolean
+  minSelect   Int?
+  maxSelect   Int?
+
+  addons      Addon[]
+}
+
+model Addon {
+  id          String @id @default(cuid())
+  groupId     String
+  group       AddonGroup @relation(fields: [groupId], references: [id])
+
+  name        String
+  price       Float
+}
