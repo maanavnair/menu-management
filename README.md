@@ -18,23 +18,25 @@ The backend is built with **Node.js**, **Express**, and **Prisma** (with a Postg
 ---
 
 ## Architecture
-
+```
 src/
-├─ controllers/ # API logic for each entity
-│ ├─ category.controller.js
-│ ├─ subcategory.controller.js
-│ ├─ item.controller.js
-│ └─ addon.controller.js
-├─ routes/ # Express route definitions
-│ ├─ category.routes.js
-│ ├─ subcategory.routes.js
-│ ├─ item.routes.js
-│ └─ addon.routes.js
-├─ prisma/ # Prisma client & schema
-│ ├─ client.js
-│ └─ schema.prisma
-├─ server.js # Express server setup
-└─ app.js # Application entry point
+├─ controllers/          # API logic for each entity
+│  ├─ category.controller.js
+│  ├─ subcategory.controller.js
+│  ├─ item.controller.js
+│  ├─ addon.controller.js
+│  └─ booking.controller.js
+├─ routes/              # Express route definitions
+│  ├─ category.routes.js
+│  ├─ subcategory.routes.js
+│  ├─ item.routes.js
+│  ├─ addon.routes.js
+│  └─ booking.routes.js
+├─ prisma/            
+│  └─ client.js
+├─ server.js            # Express server setup
+└─ app.js               # Application entry point
+```
 
 - **Controllers** handle business logic and validation.
 - **Routes** define REST endpoints and middleware.
@@ -129,11 +131,9 @@ src/
 
 ## Trade-offs and Simplifications
 
--No real-time booking notifications (would require WebSockets)
-
--Soft deletes only cascade downward (category → subcategory → items), but not upward
-
--Simplified search filters: supports partial text, price range, category, isActive, and tax applicable. Does not support multi-field complex queries.
+- No real-time booking notifications (would require WebSockets)
+- Soft deletes only cascade downward (category → subcategory → items), but not upward
+- Simplified search filters: supports partial text, price range, category, isActive, and tax applicable. Does not support multi-field complex queries.
 
 ---
 
