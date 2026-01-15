@@ -100,19 +100,19 @@ export const getItemPrice = async (req, res) => {
 
             case "TIERED": {
                 if (!usage) {
-                    return res
-                        .status(400)
-                        .json({ error: "Usage parameter required for tiered pricing" });
+                    return res.status(400).json({
+                        error: "Usage parameter required for tiered pricing",
+                    });
                 }
 
                 const tier = pricing.tiers
-                    .sort((a, b) => a.upto - b.upto)
-                    .find((t) => usage <= t.upto);
+                    .sort((a, b) => a.maxUsage - b.maxUsage)
+                    .find((t) => usage <= t.maxUsage);
 
                 if (!tier) {
-                    return res
-                        .status(400)
-                        .json({ error: "No pricing tier available for given usage" });
+                    return res.status(400).json({
+                        error: "No pricing tier available for given usage",
+                    });
                 }
 
                 basePrice = tier.price;
@@ -120,8 +120,8 @@ export const getItemPrice = async (req, res) => {
                     rule: "TIERED",
                     usage,
                     appliedTier: {
-                        upto: tier.upto,
-                        price: tier.price,
+                     maxUsage: tier.maxUsage,
+                    price: tier.price,
                     },
                 };
                 break;
