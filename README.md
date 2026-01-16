@@ -172,3 +172,42 @@ npm run dev
 ```
 
 ---
+
+## Written Reflections
+
+### Why did I choose PostgreSQL
+
+- I chose PostgreSQL with Prisma because the system is highly relational, involving categories, items, pricing rules, bookings, and add-ons.
+
+- A relational database enforces data integrity and clear relationships.
+
+- Prisma keeps the schema explicit and close to the business logic, improving maintainability.
+
+---
+
+### What I learnt during this project
+
+- I chose PostgreSQL with Prisma because the system is highly relational, involving categories, items, pricing rules, bookings, and add-ons.
+
+- A relational database enforces data integrity and clear relationships.
+
+- Prisma keeps the schema explicit and close to the business logic, improving maintainability.
+
+---
+
+### Hardest challenge I faced
+
+- Designing a flexible pricing engine that supports multiple pricing types while ensuring only one applies per item.
+
+- Handling dynamic inputs like time windows, usage tiers, and discounts without overcomplicating the design was challenging.
+
+---
+
+### What I would improve if I had more time
+
+- Add more APIs and schema validation using Zod
+
+- Implement an Auth system for user authentication and authorization
+
+---
+
